@@ -5,13 +5,14 @@ import {
 } from "@/components/ui/resizable"
 
 import { TopNav } from "../components/TopNav"
-import { collaborators, fileContents } from "../lib/mock-data"
+import { collaborators } from "../lib/mock-data"
 import {  useEffect, useState } from "react"
 import CodeEditor from "@/components/CodeEditor"
 
 function CodePlayground() {
   
-  const [panelCollapsed, setPanelCollapsed] = useState(false);
+  const [language, setLanguage] = useState("JavaScript");
+  
   
   useEffect(()=>{
   //  Get file from server
@@ -19,11 +20,12 @@ function CodePlayground() {
   return (
     <div className="flex h-screen flex-col bg-background">
       <TopNav
-        projectName="realtime-api"
-        saveState={false}
+        roomName="DSA Practice"
+        language={language}
+        onLanguageChange={setLanguage}
+        saveState="saved"
+        onRun={() => console.log("Run")}
         collaborators={collaborators}
-        onRun={() => setPanelCollapsed(false)}
-        onShare={() => setCollabOpen(true)}
       />
 
       <div className="min-h-0 flex-1">
