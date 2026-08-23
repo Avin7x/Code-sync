@@ -8,19 +8,20 @@ import { TopNav } from "../components/TopNav"
 import { collaborators } from "../lib/mock-data"
 import {  useEffect, useState } from "react"
 import CodeEditor from "@/components/CodeEditor"
+import { UserAvatar } from "@/components/UserAvatar"
 
 function CodePlayground() {
   
   const [language, setLanguage] = useState("JavaScript");
-  
-  
+  const [roomName, setRoomName] = useState("DSA Practice")
+  const [share, setShare]  = useState(false);
   useEffect(()=>{
   //  Get file from server
   }, []);
   return (
     <div className="flex h-screen flex-col bg-background">
       <TopNav
-        roomName="DSA Practice"
+        roomName={roomName}
         language={language}
         onLanguageChange={setLanguage}
         saveState="saved"
@@ -40,6 +41,11 @@ function CodePlayground() {
             maxSize="25%"
             className="bg-[#171717] border-r"
           >
+            <UserAvatar 
+            roomName={roomName}
+            language={language}
+            collaborators={collaborators}
+            />
            
           </ResizablePanel>
 
