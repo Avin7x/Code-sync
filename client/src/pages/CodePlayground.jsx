@@ -15,7 +15,7 @@ function CodePlayground() {
   
   const [language, setLanguage] = useState("JavaScript");
   const [roomName, setRoomName] = useState("DSA Practice")
-  const [share, setShare]  = useState(false);
+ 
   useEffect(()=>{
   //  Get file from server
   }, []);
