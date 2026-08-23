@@ -1,13 +1,17 @@
-import CodePlayground from "./pages/CodePlayground"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import RoomEntry from "./pages/RoomEntry";
+import CodePlayground from "./pages/CodePlayground";
 
 function App() {
-  
-
   return (
-    <>
-    <CodePlayground />
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<RoomEntry />} />
+        <Route path="/room/:roomId" element={<CodePlayground />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

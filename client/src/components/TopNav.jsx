@@ -61,28 +61,22 @@ export function TopNav({
       {/* Language selector */}
       <div className="ml-4">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 gap-1.5 px-2 text-xs"
-            >
-              {language}
-              <ChevronDown className="size-3.5 text-muted-foreground" />
-            </Button>
-          </DropdownMenuTrigger>
+  <DropdownMenuTrigger className="flex h-7 items-center gap-1.5 rounded-md px-2 text-xs hover:bg-accent">
+    {language}
+    <ChevronDown className="size-3.5 text-muted-foreground" />
+  </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="start">
-            {languages.map((item) => (
-              <DropdownMenuItem
-                key={item}
-                onClick={() => onLanguageChange(item)}
-              >
-                {item}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+  <DropdownMenuContent align="end">
+    {languages.map((item) => (
+      <DropdownMenuItem
+        key={item}
+        onClick={() => onLanguageChange(item)}
+      >
+        {item}
+      </DropdownMenuItem>
+    ))}
+  </DropdownMenuContent>
+</DropdownMenu>
       </div>
 
       {/* Right side */}

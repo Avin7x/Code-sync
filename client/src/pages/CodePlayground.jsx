@@ -9,12 +9,13 @@ import { collaborators } from "../lib/mock-data"
 import {  useEffect, useState } from "react"
 import CodeEditor from "@/components/CodeEditor"
 import { UserAvatar } from "@/components/UserAvatar"
+import Terminal from "@/components/Terminal"
 
 function CodePlayground() {
   
   const [language, setLanguage] = useState("JavaScript");
   const [roomName, setRoomName] = useState("DSA Practice")
-  const [share, setShare]  = useState(false);
+ 
   useEffect(()=>{
   //  Get file from server
   }, []);
@@ -70,11 +71,7 @@ function CodePlayground() {
                 minSize="15%"
                 className="bg-[#171717]"
               >
-                <div className="flex h-full items-center justify-center p-6">
-                  <span className="font-semibold">
-                    Terminal
-                  </span>
-                </div>
+                <Terminal/>
               </ResizablePanel>
             </ResizablePanelGroup>
           </ResizablePanel>
