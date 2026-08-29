@@ -16,7 +16,7 @@ import {
 
 export function TopNav({
   roomName="My DSA Practice",
-  language="javascript",
+  language,
   onLanguageChange,
   saveState,
   onRun,

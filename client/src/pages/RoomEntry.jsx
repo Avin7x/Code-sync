@@ -4,20 +4,34 @@ import { Code2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { useNavigate } from "react-router-dom";
+import { api } from "@/api/roomApi";
+
 function RoomEntry() {
+  const navigate = useNavigate();
+
   const [roomName, setRoomName] = useState("");
   const [roomId, setRoomId] = useState("");
 
-  const handleCreateRoom = () => {
+  const handleCreateRoom = async () => {
     if (!roomName.trim()) return;
 
-    console.log("Create room:", roomName);
+    try {
+      const { data } = await api.post("/rooms/create", {
+        roomName
+      });
+
+      navigate(`/room/${data.room._id}`);
+    } catch (error) {
+      console.error(
+        "[Room] Create failed:",
+        error.response?.data?.error || error.message
+      );
+    }
   };
 
-  const handleJoinRoom = () => {
-    if (!roomId.trim()) return;
-
-    console.log("Join room:", roomId);
+  const handleJoinRoom = async () => {
+    navigate(`/room/${data.room._id}`);
   };
 
   return (

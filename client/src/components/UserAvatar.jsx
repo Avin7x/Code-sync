@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
+import { useParams } from "react-router-dom";
 
 export function UserAvatar({
   roomName,
@@ -20,7 +21,7 @@ export function UserAvatar({
   const [copied, setCopied] = useState(false);
 
   // Replace this later with the actual room ID from your backend
-  const roomId = "abc123";
+  const {roomId} = useParams();
 
   const roomLink = `${window.location.origin}/room/${roomId}`;
 

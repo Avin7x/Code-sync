@@ -1,6 +1,7 @@
 "use client"
 
 import Editor from "@monaco-editor/react"
+import { useEffect, useRef } from "react";
 
 
 function CodeEditor({
@@ -9,6 +10,23 @@ function CodeEditor({
   onChange,
 }) {
 
+  const typingTimer = useRef(null);
+
+const handleEditorChange = (value) => {
+  clearTimeout(typingTimer.current);
+
+  typingTimer.current = setTimeout(() => {
+    console.log("User stopped typing");
+
+    // send/save the code here
+  }, 500);
+};
+
+useEffect(() => {
+  return () => {
+    clearTimeout(typingTimer.current);
+  };
+}, []);
     
   return (
     <div className="h-full w-full">
@@ -18,7 +36,7 @@ function CodeEditor({
         theme="vs-dark"
         language={language}
         value={value}
-        onChange={(value) => onChange(value ?? "")}
+        onChange={(value)=>handleEditorChange(value)}
         options={{
           fontSize: 14,
           minimap: {
