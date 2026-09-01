@@ -12,6 +12,7 @@ import { UserAvatar } from "@/components/UserAvatar"
 import Terminal from "@/components/Terminal"
 import { useNavigate, useParams } from "react-router-dom"
 import { api } from "@/api/roomApi"
+import { useCollaboration } from "@/lib/useCollaboration"
 
 function CodePlayground() {
   const navigate = useNavigate();
@@ -39,6 +40,8 @@ function CodePlayground() {
     };
     getRoomDetails();
   }, [roomId, navigate]);
+
+  const {ydoc, ytext} = useCollaboration(roomId);
   
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -81,7 +84,7 @@ function CodePlayground() {
             >
               {/* Code Editor */}
               <ResizablePanel defaultSize="60%">
-                  <CodeEditor value={room.code}/>
+                  <CodeEditor ytext={ytext}/>
               </ResizablePanel>
 
               <ResizableHandle withHandle />

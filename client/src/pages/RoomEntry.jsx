@@ -31,7 +31,7 @@ function RoomEntry() {
   };
 
   const handleJoinRoom = async () => {
-    navigate(`/room/${data.room._id}`);
+    navigate(`/room/${roomId}`);
   };
 
   return (

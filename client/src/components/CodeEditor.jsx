@@ -2,14 +2,18 @@
 
 import Editor from "@monaco-editor/react"
 import { useEffect, useRef } from "react";
-
+import { MonacoBinding } from "y-monaco";
+import * as Y from "yjs";
+import { io } from "socket.io-client"
 
 function CodeEditor({
-  value,
+  ytext,
   language = "javascript",
   onChange,
 }) {
 
+  const ydocRef = useRef(null);
+  const bindingRef = useRef(null);
   const typingTimer = useRef(null);
 
 const handleEditorChange = (value) => {
@@ -22,10 +26,28 @@ const handleEditorChange = (value) => {
   }, 500);
 };
 
+const handleEditorMount = (editor) => {
+  
+  // binding ytext/yjs to monaco
+  const binding = new MonacoBinding(
+    ytext,
+    editor.getModel(),
+    new Set([editor])
+  )
+  bindingRef.current = binding;
+}
 useEffect(() => {
+  
   return () => {
     clearTimeout(typingTimer.current);
   };
+}, []);
+
+useEffect(() => {
+  
+  return () => {
+    bindingRef.current?.destroy();
+  }
 }, []);
     
   return (
@@ -35,8 +57,7 @@ useEffect(() => {
         width="100%"
         theme="vs-dark"
         language={language}
-        value={value}
-        onChange={(value)=>handleEditorChange(value)}
+        onMount={handleEditorMount}
         options={{
           fontSize: 14,
           minimap: {
