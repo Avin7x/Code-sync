@@ -5,48 +5,25 @@ import {
 } from "@/components/ui/resizable"
 
 import { TopNav } from "../components/TopNav"
-import { collaborators } from "../lib/mock-data"
-import {  useEffect, useState } from "react"
+import {  useState } from "react"
 import CodeEditor from "@/components/CodeEditor"
 import { UserAvatar } from "@/components/UserAvatar"
 import Terminal from "@/components/Terminal"
-import { useNavigate, useParams } from "react-router-dom"
-import { api } from "@/api/roomApi"
+import {  useParams } from "react-router-dom"
+import { useRoom } from "@/context/RoomContext"
 import { useCollaboration } from "@/lib/useCollaboration"
 
 function CodePlayground() {
-  const navigate = useNavigate();
   const [language, setLanguage] = useState("JavaScript");
-  const [room, setRoom] = useState("");
+  const { room, user } = useRoom();
   const { roomId } = useParams();
- 
-  useEffect(()=>{
-  //  Get room details from server
-   const getRoomDetails = async () => {
   
-      try {
-        const { data } = await api.get(
-          `/rooms/${roomId}`
-        );
-        setRoom(data.room);
-        
-      } catch (error) {
-        console.error(
-          "[Room] Join failed:",
-          error.response?.data?.error || error.message
-        );
-        navigate('/');
-      }
-    };
-    getRoomDetails();
-  }, [roomId, navigate]);
-
-  const {ydoc, ytext} = useCollaboration(roomId);
+  const { ytext, collaborators } = useCollaboration(roomId, user);
   
   return (
     <div className="flex h-screen flex-col bg-background">
       <TopNav
-        roomName={room.name}
+        roomName={room?.owner}
         language={language}
         onLanguageChange={setLanguage}
         saveState="saved"
@@ -67,7 +44,7 @@ function CodePlayground() {
             className="bg-[#171717] border-r"
           >
             <UserAvatar 
-            roomName={room.nave}
+            roomName={user.name}
             language={language}
             collaborators={collaborators}
             />

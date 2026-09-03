@@ -15,7 +15,7 @@ import {
 } from "./ui/dropdown-menu";
 
 export function TopNav({
-  roomName="My DSA Practice",
+  roomName,
   language,
   onLanguageChange,
   saveState,
@@ -54,7 +54,7 @@ export function TopNav({
       {/* Room name */}
       <div className="ml-3">
         <span className="text-sm font-medium text-foreground uppercase">
-          {roomName}
+          {roomName.length > 1 ? roomName.split(" ")[0] : roomName}'s Room
         </span>
       </div>
 

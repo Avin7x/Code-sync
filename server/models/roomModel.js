@@ -1,21 +1,34 @@
 import mongoose from "mongoose";
 
-const roomSchema = new mongoose.Schema({
-    name: {
-        type: String, 
-        required: true,
-        trim: true
+const roomSchema = new mongoose.Schema(
+  {
+    roomId: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    ownerId: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    owner: {
+      type: String,
+      required: true,
+      trim: true,
     },
     language: {
-        type: String,
-        default: "JavaScript"
+      type: String,
+      default: "JavaScript",
     },
     code: {
-        type: String,
-        default: ""
+      type: String,
+      default: "",
     },
-   
-}, {timestamps: true});
+  },
+  { timestamps: true },
+);
 
 const Room = mongoose.model("Room", roomSchema);
 export default Room;

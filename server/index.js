@@ -34,15 +34,39 @@ app.get('/', (_, res) => {
 
 app.use("/api/rooms", roomRouter);
 
-
+const activeUsers = new Map();
 io.on("connection", (socket) => {
    console.log(`[Socket] Connected: ${socket.id}`);
 
-   socket.on("join-room", async (roomId) => {
+   socket.on("join-room", async ({roomId, userId, name}) => {
       // Join Socket.IO room
       socket.join(roomId);
-
       console.log(`[Socket] ${socket.id} joined ${roomId}`);
+
+      socket.userId = userId;
+      socket.roomId = roomId;
+
+      if(!activeUsers.has(roomId)){
+        activeUsers.set(roomId, new Map());
+      }
+        
+      const users = activeUsers.get(roomId);
+
+      users.set(userId, {
+        name,
+        socketId: socket.id
+      });
+
+      
+
+      // Update everyone with the current users
+      io.to(roomId).emit("room-users", [...users.values()]);
+
+      // Tell everyone that a new user joined
+      socket.to(roomId).emit("user-joined", {
+          userId,
+          name,
+      });
 
       // Get the Y.DOC for this room
       let ydoc = getRoomDoc(roomId);
@@ -50,7 +74,7 @@ io.on("connection", (socket) => {
       // if this is the first user
       // create the ydoc
       if(!ydoc){
-        const room = await Room.findById(roomId);
+        const room = await Room.findOne({roomId});
 
         if(!room) {
           socket.emit("room-error", {
@@ -84,9 +108,28 @@ io.on("connection", (socket) => {
      socket.to(roomId).emit("yjs-update", update);
    });
 
-    socket.on('disconnect', () => {
+  socket.on('disconnect', () => {
+        const users = activeUsers.get(socket.roomId);
+        if (!users) return;
+
+        const user = users.get(socket.userId);
+
+        users.delete(socket.userId);
+        io.to(socket.roomId).emit("room-users", [...users.values()]);
+
+        // Tell remaining users who left
+        socket.to(socket.roomId).emit("user-left", {
+          userId: socket.userId,
+          name: user?.name,
+        });
+
+        // If nobody is left, remove the room from activeUsers
+        if (users.size === 0) {
+            activeUsers.delete(socket.roomId);
+        }
+
         console.log(`User disconnected: ${socket.id}`);
-    })
+  })
 });
 
 

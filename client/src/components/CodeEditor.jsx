@@ -3,13 +3,10 @@
 import Editor from "@monaco-editor/react"
 import { useEffect, useRef } from "react";
 import { MonacoBinding } from "y-monaco";
-import * as Y from "yjs";
-import { io } from "socket.io-client"
 
 function CodeEditor({
   ytext,
   language = "javascript",
-  onChange,
 }) {
 
   const ydocRef = useRef(null);
@@ -72,7 +69,7 @@ useEffect(() => {
           roundedSelection: false,
           cursorStyle: "line",
           tabSize: 2,
-          wordWrap: "off",
+          wordWrap: "on",
           folding: true,
           renderWhitespace: "selection",
           suggestOnTriggerCharacters: true,

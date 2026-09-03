@@ -1,11 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as Y from "yjs";
 import { io } from "socket.io-client";
+import toast from "react-hot-toast";
 
-export function useCollaboration(roomId) {
+
+export function useCollaboration(roomId, user) {
     const ydocRef = useRef(new Y.Doc());
     const socketRef = useRef(null);
     const ytext = ydocRef.current.getText("code");
+
+    const [collaborators, setCollaborators] = useState([]);
 
     useEffect(() => {
         if(!roomId) return;
@@ -60,7 +64,21 @@ export function useCollaboration(roomId) {
         /**
          * Join the Socket.Io room
          */
-        socket.emit("join-room", roomId);
+        socket.emit("join-room", {roomId, userId: user.userId, name: user.name});
+
+        socket.on("room-users", (users) => {
+            console.log(users);
+            setCollaborators(users);
+        })
+
+        // user joined and left notifiers
+        socket.on("user-joined", ({ name }) => {
+            toast.success(`${name} joined the room`);
+        });
+
+        socket.on("user-left", ({ name }) => {
+            toast(`${name} left the room`);
+        });
 
 
         // Clean up
@@ -70,10 +88,10 @@ export function useCollaboration(roomId) {
             socket.disconnect();
             socketRef.current = null;
         }
-    }, [roomId]);
+    }, [roomId, user]);
 
     return {
-        ydoc: ydocRef.current,
-        ytext
+        ytext,
+        collaborators
     }
 }
