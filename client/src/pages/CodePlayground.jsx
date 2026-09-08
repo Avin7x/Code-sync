@@ -15,8 +15,9 @@ import { useCollaboration } from "@/lib/useCollaboration"
 
 function CodePlayground() {
   const [language, setLanguage] = useState("JavaScript");
-  const { room, user } = useRoom();
+  const { room, user, runCode } = useRoom();
   const { roomId } = useParams();
+  
   
   const { ytext, collaborators } = useCollaboration(roomId, user);
   
@@ -27,7 +28,7 @@ function CodePlayground() {
         language={language}
         onLanguageChange={setLanguage}
         saveState="saved"
-        onRun={() => console.log("Run")}
+        onRun={() => runCode({code: ytext.toString(), language})}
         collaborators={collaborators}
       />
 
@@ -36,7 +37,7 @@ function CodePlayground() {
           orientation="horizontal"
           className="h-full"
         >
-          {/*  */}
+          {/* Users List */}
           <ResizablePanel
             defaultSize="15%"
             minSize="15%"

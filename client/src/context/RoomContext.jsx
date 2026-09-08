@@ -41,8 +41,6 @@ export function RoomProvider ({children}) {
 
             const createdRoom = data.room;
 
-           
-
             const currentUser = {
                 userId,
                 name: name.trim(),
@@ -99,12 +97,27 @@ export function RoomProvider ({children}) {
         }
     }
 
+    const runCode = async ({code, language}) => {
+        try {
+            const job = {
+                roomId: room.roomId,
+                userName: user.name,
+                language,
+                code
+            }
+            await api.post("/rooms/execute", {job});
+
+        } catch (error) {
+            console.error(error.response?.data?.message || error.message);
+        }
+    }
     return (
         <RoomContext.Provider value={{
             room,
             user,
             createRoom,
-            joinRoom
+            joinRoom,
+            runCode
         }}>
             {children}
         </RoomContext.Provider>

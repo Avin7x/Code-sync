@@ -1,16 +1,13 @@
 import * as Y from "yjs";
 
 const rooms = new Map();
-export function createRoomDoc(roomId, initialCode = "") {
+export function createRoomDoc(roomId) {
     const ydoc = new Y.Doc();
 
     const ytext = ydoc.getText("code");
 
-    if(initialCode){
-        ytext.insert(0, initialCode);
-    }
     rooms.set(roomId, ydoc);
-
+    
     return ydoc;
 }
 

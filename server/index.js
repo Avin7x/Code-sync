@@ -84,7 +84,7 @@ io.on("connection", (socket) => {
           return;
         }
 
-        ydoc = createRoomDoc(roomId, room.code);
+        ydoc = createRoomDoc(roomId);
 
       }
 
