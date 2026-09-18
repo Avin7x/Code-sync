@@ -5,10 +5,10 @@ import connectDB from "./lib/db.js";
 import roomRouter from "./routes/roomRoutes.js";
 import { Server } from "socket.io";
 import http from "http";
-import { createRoomDoc, getRoomDoc } from "./lib/roomStore.js";
+import { createRoomDoc, getRoomDoc } from "./utils/roomStore.js";
 import Room from "./models/roomModel.js";
 import * as Y from "yjs"; 
-
+import { startRedisSubscriber } from "./utils/startRedisSubscriber.js";
 
 const app = express(); 
 
@@ -37,7 +37,8 @@ app.use("/api/rooms", roomRouter);
 const activeUsers = new Map();
 io.on("connection", (socket) => {
    console.log(`[Socket] Connected: ${socket.id}`);
-
+  
+  
    socket.on("join-room", async ({roomId, userId, name}) => {
       // Join Socket.IO room
       socket.join(roomId);
@@ -130,14 +131,21 @@ io.on("connection", (socket) => {
 
         console.log(`User disconnected: ${socket.id}`);
   })
+
+  
 });
+
+
 
 
 
 // App startup
 const port = process.env.PORT ?? 8000;
 connectDB()
-  .then(() => {
+  .then(async () => {
+    
+    await startRedisSubscriber(io);
+
     httpServer.listen(port, () => {
       console.log(`[Server] Running on http://localhost:${port}`);
     });

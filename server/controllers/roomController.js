@@ -1,6 +1,6 @@
 import Room from "../models/roomModel.js";
 import { nanoid } from "nanoid";
-import { createClient }  from "redis";
+import client from "../lib/redisClient.js";
 
 export async function createRoom (req, res) {
     const { name, userId } = req.body;
@@ -32,27 +32,16 @@ export async function joinRoom(req, res) {
 
 
 export async function execute(req, res) {
-    // setup redis connection
-    const client = createClient();
-
-    client.on("error", (err) => {
-        console.error("Redis client error", err);
-    });
-
-    await client.connect();
-
+    
     // Get  job request from client;
     const { job } = req.body;
 
     if(!job) {
-        await client.quit();
         return res.status(400).json({error:"Job is required"});
     }
     // push the job to redis list
     await client.lPush("execution-queue", JSON.stringify(job));
-    console.log("Job added");
-
-    await client.quit();
+    // console.log("Job added");
 
     return res.status(200).json({
         message: "Job added to execution queue",
