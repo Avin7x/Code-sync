@@ -23,15 +23,16 @@ export function TopNav({
   collaborators = [],
 }) {
   const languages = [
-    "JavaScript",
-    "TypeScript",
-    "Python",
-    "Java",
-    "C++",
-    "C",
-    "Go",
-    "Rust",
-  ];
+  "javascript",
+  "typescript",
+  "python",
+  "java",
+  "cpp",
+  "c",
+  "go",
+  "rust",
+]
+
 
   return (
     <header className="flex h-12 shrink-0 items-center border-b border-border bg-sidebar px-3">

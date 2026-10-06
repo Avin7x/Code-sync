@@ -1,97 +1,63 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as Y from "yjs";
-import { io } from "socket.io-client";
+// import * as awarenessProtocol from "y-protocols/awareness.js";
+import Provider from "./yjsProvider";
 import toast from "react-hot-toast";
 
-
 export function useCollaboration(roomId, user) {
-    const ydocRef = useRef(new Y.Doc());
-    const socketRef = useRef(null);
+    const ydocRef = useRef(null);
+    const providerRef = useRef(null);
+
+    if(!ydocRef.current) {
+        ydocRef.current = new Y.Doc();
+    }
     const ytext = ydocRef.current.getText("code");
 
+    const [awareness, setAwareness] = useState(null);
     const [collaborators, setCollaborators] = useState([]);
+    const [executionResult, setExecutionResult] = useState(null);
 
     useEffect(() => {
-        if(!roomId) return;
-        
-        const socket = io("http://localhost:5000");
-        socketRef.current = socket;
+        if (!roomId || !user) return;
 
-        /*
-        * Receive current Yjs state
-        * when joining the room
-        */
-        socket.on("sync-state", (update) => {
-             const decoded = new Uint8Array(update);
-            Y.applyUpdate(
+        const provider = new Provider (
                 ydocRef.current,
-                decoded,
-                "remote"
-            )
-        })
-
-
-        /*
-        * Receive live updates
-        * from other users
-        */
-        socket.on("yjs-update", (update) => {
-            const decoded = new Uint8Array(update);
-            Y.applyUpdate(
-                ydocRef.current,
-                decoded,
-                "remote"
-            )
-        })
-
-
-        /*
-        * Send local Yjs changes
-        * to the server
-        */
-        const handleYjsUpdate = (update, origin) =>  {
-            console.log("handleYjsUpdate hit!");
-            if(origin === "remote") return;
-
-            socket.emit("yjs-update", {
-                roomId,
-                update
-            });
-        }
-        ydocRef.current.on("update", handleYjsUpdate);
-
+                "http://localhost:5000",
+                roomId
+            );
         
-        /**
-         * Join the Socket.Io room
-         */
-        socket.emit("join-room", {roomId, userId: user.userId, name: user.name});
+            
+        setAwareness(provider.awareness);    
+        providerRef.current = provider;
+           
 
-        socket.on("room-users", (users) => {
-            console.log(users);
-            setCollaborators(users);
-        })
+        const handleExecutionResult = (result) => {
+            console.log(result);
+            setExecutionResult(result);
+        };
 
-        // user joined and left notifiers
-        socket.on("user-joined", ({ name }) => {
-            toast.success(`${name} joined the room`);
-        });
-
-        socket.on("user-left", ({ name }) => {
-            toast(`${name} left the room`);
-        });
-
+        providerRef.current.socket.on("execution-result", handleExecutionResult);
 
         // Clean up
         return () => {
-            ydocRef.current.off("update", handleYjsUpdate);
-            
-            socket.disconnect();
-            socketRef.current = null;
-        }
+             
+            providerRef.current.socket.off(
+                "execution-result",
+                handleExecutionResult
+            );
+
+            providerRef.current.destroy();
+
+            providerRef.current = null;
+
+        };
     }, [roomId, user]);
 
     return {
+        ydoc: ydocRef.current,
         ytext,
-        collaborators
-    }
+        awareness,
+        collaborators,
+        executionResult
+    };
 }

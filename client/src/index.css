@@ -222,3 +222,37 @@
 .animate-cursor-blink {
   animation: cursor-blink 1.1s steps(1) infinite;
 }
+
+.yRemoteSelection {
+  opacity: 1;
+}
+
+/* The vertical caret */
+.yRemoteSelectionHead {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 0;
+  box-sizing: border-box;
+  border-left: 2px solid; /* color is set per-user in JS */
+  border-top: none;
+  border-bottom: none;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Name label above the caret */
+.yRemoteSelectionHead::after {
+  position: absolute;
+  top: -1.3em;
+  left: -2px;
+  padding: 0 5px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: #fff;
+  white-space: nowrap;
+  border-radius: 3px 3px 3px 0;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease;
+}

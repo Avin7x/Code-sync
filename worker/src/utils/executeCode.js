@@ -50,12 +50,18 @@ export async function executeCode(job) {
   const docker = spawn("docker", [
     "run",
     "--rm",
+    "-i",
     "-v",
     dockerVolume,
     config.image,
     ...config.command,
   ]);
 
+  if(job.input){
+    docker.stdin.write(job.input);
+    
+  }
+  docker.stdin.end();
 
   let stdOut = "";
   let stdErr = "";

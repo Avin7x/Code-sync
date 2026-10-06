@@ -2,7 +2,7 @@ import { api } from "@/api/roomApi";
 import { createContext, useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-// Creates user id
+
 const getUserId = () => {
     let id = sessionStorage.getItem("user-id");
     if(!id){
@@ -97,14 +97,15 @@ export function RoomProvider ({children}) {
         }
     }
 
-    const runCode = async ({code, language}) => {
+    const runCode = async ({code, language, input}) => {
         try {
             const job = {
                 _id: Date.now(),
                 roomId: room.roomId,
                 userName: user.name,
                 language,
-                code
+                code,
+                input
             }
             await api.post("/rooms/execute", {job});
 
